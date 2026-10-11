@@ -8,6 +8,7 @@ import {
   search_code,
 } from "./tools.js";
 import type { CallToolResult } from "@modelcontextprotocol/server";
+import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 
 
 export const server = new McpServer({
@@ -100,3 +101,15 @@ server.registerTool(
   ({ repo_url, query, per_page }) =>
     run(() => search_code({ repoUrl: repo_url, query, perPage: per_page })),
 );
+
+
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error("Github MCP Server running on stdio");
+}
+
+main().catch((error)=>{
+  console.error("Fatal error in main(): ",error);
+  process.exit();
+})
